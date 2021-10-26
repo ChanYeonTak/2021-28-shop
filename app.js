@@ -8,12 +8,14 @@ const helmet = require('helmet');
 // const passportModule = require('./passport');
 const method = require('./middlewares/method-mw');
 const logger = require('./middlewares/morgan-mw');
-// const session = require('./middlewares/session-mw');
+const session = require('./middlewares/session-mw');
 const locals = require('./middlewares/locals-mw');
-// const { sequelize } = require('./models');
+const {
+  sequelize
+} = require('./models');
 
 /*************** sequelize init **************/
-// require('./modules/sequelize-init')(sequelize);
+require('./modules/sequelize-init')(sequelize);
 
 /*************** server init **************/
 require('./modules/server-init')(app, process.env.PORT);
@@ -38,7 +40,7 @@ app.use(express.urlencoded({
   extended: false
 }));
 app.use(method());
-// app.use(session(app));
+app.use(session(app));
 
 /**************** passport ****************/
 // passportModule(passport);

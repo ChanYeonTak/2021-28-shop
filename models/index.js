@@ -1,12 +1,23 @@
 const fs = require('fs-extra')
 const path = require('path')
 const Sequelize = require('sequelize')
-const config = require('../config/config')
+const config = {
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  dialect: process.env.DB_DIALECT
+};
 const db = {}
 
-const sequelize = new Sequelize(config.database, config.username, config.password, config);
-fs
-  .readdirSync(__dirname)
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
+
+fs.readdirSync(__dirname)
   .filter(file => file !== 'index.js')
   .forEach(file => {
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
