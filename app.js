@@ -36,9 +36,7 @@ app.locals.pretty = true;
 
 /*************** middleware ***************/
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: false
-}));
+app.use(express.urlencoded({ extended: false }));
 app.use(method());
 app.use(session(app));
 
