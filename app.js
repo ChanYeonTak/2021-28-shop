@@ -54,6 +54,8 @@ app.use(locals);
 app.use(logger);
 
 /*************** router init **************/
+const adminRouter = require('./routes/admin')
+const apiRouter = require('./routes/api')
 
 /**************** error init **************/
 const _404Router = require('./routes/error/404-router');
