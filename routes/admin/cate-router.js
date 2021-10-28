@@ -4,20 +4,19 @@ const router = express.Router()
 const { error } = require('../../modules/util')
 
 router.get('/', (req, res, next) => {
-  res.send('/admin/system')
-});
-
-router.post('/', (req, res, next) => {
-  res.send('/admin/system:POST')
-});
+  res.render('admin/cate/cate', { css: 'admin-cate' })
+})
 
 router.put('/', (req, res, next) => {
-  res.send('/admin/system:PUT')
-});
+  res.send('/admin/cate:PUT')
+})
 
 router.delete('/', (req, res, next) => {
-  res.send('/admin/system:DELETE')
-});
+  res.send('/admin/cate:DELETE')
+})
 
+router.post('/', (req, res, next) => {
+  res.send('/admin/cate:POST')
+})
 
-module.exports = { name: '/system', router };
+module.exports = { name: '/cate', router }

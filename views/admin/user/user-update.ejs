@@ -4,33 +4,33 @@
   <form name="updateForm" method="POST">
     <input type="hidden" name="_method" value="PUT">
     <input type="hidden" name="id" value="1">
-    <table class="user-tbl table border-bottom">
+    <table class="user-tbl table">
       <tbody>
         <tr>
           <td class="title">아이디</td>
           <td class="content">
-            <b>lainchan</b>
+            <b>booldook</b>
           </td>
         </tr>
         <tr>
           <td class="title">이름</td>
           <td class="content">
-            <input type="text" name="username" class="form-control" placeholder="이름(필수사항)" style="max-width:200px;">
+            <input type="text" name="username" class="form-control" placeholder="이름(필수사항)" style="max-width: 200px;">
           </td>
         </tr>
         <tr>
           <td class="title">전화번호</td>
           <td class="content form-inline">
-            <select name="tel1" class="form-control" style="max-width:100px;">
+            <select name="tel1" class="form-control" style="max-width: 100px;">
               <option value="">선택</option>
               <% for(let v of telNumber) { %>
               <option value="<%=v%>"><%=v%></option>
               <% } %>
-            </select> 
+            </select>
             <span class="px-2">-</span>
-            <input type="text" name="tel2" class="form-control" style="max-width:80px;">
+            <input type="text" name="tel2" class="form-control" style="max-width: 80px;">
             <span class="px-2">-</span>
-            <input type="text" name="tel3" class="form-control" style="max-width:80px;">
+            <input type="text" name="tel3" class="form-control" style="max-width: 80px;">
           </td>
         </tr>
         <tr>
@@ -42,7 +42,7 @@
         <tr>
           <td class="title" rowspan="2">주소</td>
           <td class="content form-inline">
-            <input type="text" name="addrPost" class="form-control mr-2" readonly style="max-width:120px;">
+            <input type="text" name="addrPost" class="form-control mr-2" readonly style="max-width: 120px;">
             <button class="btn btn-primary">우편번호찾기</button>
           </td>
         </tr>

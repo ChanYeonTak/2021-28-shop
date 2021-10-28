@@ -1,15 +1,16 @@
 @import '../common';
 
 .login-wrapper {
-  background: url(../img/admin/typewrite.jpg) no-repeat center; 
+  background: url(/img/admin/typewriter.jpg) no-repeat center;
   background-size: cover;
-  height: 100vh; 
+  width: 100%;
+  height: 100vh;
   @include flex($h: center, $v: center);
   @include flexCol;
   .title-wrap {
     width: 400px;
     text-align: left;
-    font-size: 1.25em;
+    font-size: 1.5em;
     margin-bottom: 0.5em;
     color: $white-color;
   }
@@ -23,7 +24,7 @@
       td {
         padding: 0.5em;
         &.title {
-          width: 140px;
+          width: 120px;
           padding-right: 1em;
         }
       }
