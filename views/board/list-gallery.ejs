@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/css/board-gallery.css">
+<link rel="stylesheet" href="/css/board.css">
 <article class="board-container gallery-type list-page">
   <ul class="list-wrap">
     <li class="list" data-link="/admin/board/1">
@@ -10,9 +10,5 @@
   </ul>
   <%- //include('../inc/pager.ejs') %> 
 </article>
-<script>
-  $('.board-container.list-page.gallery-type .list').click(onBoardListClick);
-  function onBoardListCLick() {
-    location.href = $(this).data('link') + '?type=gallery';
-  }
+<script src="/js/board/board.js">
 </script>
