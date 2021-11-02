@@ -6,7 +6,7 @@ const {
   error,
   telNumber,
   alert,
-  generateUser
+  getStringTel
 } = require('../../modules/util');
 const {
   User,
@@ -34,20 +34,7 @@ router.get('/', pager(User), async (req, res, next) => {
     let {
       field = 'id', search = '', sort = 'desc'
     } = req.query;
-    let where = search ? {
-      [field]: {
-        [Op.like]: '%' + search + '%'
-      }
-    } : null;
-    const rs = await User.findAll({
-      order: [
-        [field || 'id', sort || 'desc']
-      ],
-      offset: req.pager.startIdx,
-      limit: req.pager.listCnt,
-      where,
-    });
-    const users = generateUser(rs);
+    const users = await User.searchUser(req.query, req.pager);
     const ejs = {
       telNumber,
       pager: req.pager,
@@ -74,8 +61,8 @@ router.get('/:id', (req, res, next) => {
 // 회원 저장
 router.post('/', async (req, res, next) => {
   try {
+    req.body.tel = getStringTel(req.body.tel1, req.body.tel2, req.body.tel3);
     const user = await User.create(req.body);
-    user.save();
     res.send(alert('회원가입이 완료되었습니다.', '/admin/user'));
   } catch (err) {
     next(createError(err));
