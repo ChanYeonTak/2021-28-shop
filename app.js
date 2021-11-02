@@ -10,9 +10,7 @@ const method = require('./middlewares/method-mw');
 const logger = require('./middlewares/morgan-mw');
 const session = require('./middlewares/session-mw');
 const locals = require('./middlewares/locals-mw');
-const {
-  sequelize
-} = require('./models');
+const { sequelize } = require('./models');
 
 /*************** sequelize init **************/
 require('./modules/sequelize-init')(sequelize, true);
@@ -21,9 +19,7 @@ require('./modules/sequelize-init')(sequelize, true);
 require('./modules/server-init')(app, process.env.PORT);
 
 /*************** helmet init **************/
-app.use(helmet({
-  contentSecurityPolicy: false
-}));
+app.use(helmet({ contentSecurityPolicy: false }));
 
 /*************** static init **************/
 app.use('/', express.static(path.join(__dirname, 'public')));
@@ -36,9 +32,7 @@ app.locals.pretty = true;
 
 /*************** middleware ***************/
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: false
-}));
+app.use(express.urlencoded({ extended: false }));
 app.use(method());
 app.use(session(app));
 
