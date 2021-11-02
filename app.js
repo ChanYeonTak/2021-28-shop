@@ -15,7 +15,7 @@ const {
 } = require('./models');
 
 /*************** sequelize init **************/
-require('./modules/sequelize-init')(sequelize);
+require('./modules/sequelize-init')(sequelize, true);
 
 /*************** server init **************/
 require('./modules/server-init')(app, process.env.PORT);
@@ -36,7 +36,9 @@ app.locals.pretty = true;
 
 /*************** middleware ***************/
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(method());
 app.use(session(app));
 
@@ -52,11 +54,11 @@ app.use(locals);
 app.use(logger);
 
 /*************** router init **************/
-const adminRouuter = require('./routes/admin');
-const apiRouuter = require('./routes/api');
+const adminRouter = require('./routes/admin');
+const apiRouter = require('./routes/api');
 
-app.use('/admin', adminRouuter);
-app.use('/api', apiRouuter);
+app.use('/admin', adminRouter);
+app.use('/api', apiRouter);
 
 /**************** error init **************/
 const _404Router = require('./routes/error/404-router');
