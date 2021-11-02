@@ -1,14 +1,10 @@
 const bcrypt = require('bcrypt');
-const {
-  generateUser
-} = require('../modules/util');
+const { generateUser } = require('../modules/util');
 
-module.exports = (sequelize, {
-  DataTypes,
-  Op
-}) => {
+module.exports = (sequelize, { DataTypes, Op }) => {
   const User = sequelize.define(
-    'User', {
+    'User',
+    {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
         primaryKey: true,
@@ -40,6 +36,7 @@ module.exports = (sequelize, {
       email: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        unique: true,
         validate: {
           isEmail: true,
         },
@@ -80,7 +77,8 @@ module.exports = (sequelize, {
           len: [11, 14],
         },
       },
-    }, {
+    },
+    {
       charset: 'utf8',
       collate: 'utf8_general_ci',
       tableName: 'user',
@@ -93,48 +91,27 @@ module.exports = (sequelize, {
   };
 
   User.beforeCreate(async (user) => {
-    const {
-      BCRYPT_SALT: salt,
-      BCRYPT_ROUND: rnd
-    } = process.env;
+    const { BCRYPT_SALT: salt, BCRYPT_ROUND: rnd } = process.env;
     const hash = await bcrypt.hash(user.userpw + salt, Number(rnd));
     user.userpw = hash;
   });
 
   User.searchUser = async function (query, pager) {
-    let {
-      field = 'id', search = '', sort = 'desc'
-    } = query;
-    let where = search ? {
-      [field]: {
-        [Op.like]: '%' + search + '%'
-      }
-    } : null;
+    let { field = 'id', search = '', sort = 'desc' } = query;
+    let where = search ? { [field]: { [Op.like]: '%' + search + '%' } } : null;
     if (field === 'addrRoad' && search !== '') {
       where = {
         [Op.or]: {
-          addrPost: {
-            [Op.like]: '%' + search + '%'
-          },
-          addrRoad: {
-            [Op.like]: '%' + search + '%'
-          },
-          addrJibun: {
-            [Op.like]: '%' + search + '%'
-          },
-          addrComment: {
-            [Op.like]: '%' + search + '%'
-          },
-          addrDetail: {
-            [Op.like]: '%' + search + '%'
-          },
+          addrPost: { [Op.like]: '%' + search + '%' },
+          addrRoad: { [Op.like]: '%' + search + '%' },
+          addrJibun: { [Op.like]: '%' + search + '%' },
+          addrComment: { [Op.like]: '%' + search + '%' },
+          addrDetail: { [Op.like]: '%' + search + '%' },
         },
       };
     }
     const rs = await this.findAll({
-      order: [
-        [field || 'id', sort || 'desc']
-      ],
+      order: [[field || 'id', sort || 'desc']],
       offset: pager.startIdx,
       limit: pager.listCnt,
       where,
