@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/css/board.css">
+<link rel="stylesheet" href="/css/<%= currents[1] %>-<%= boardType %>.css">
 <article class="board-container gallery-type list-page">
   <ul class="list-wrap">
     <li class="list" data-link="/<%= currents[0] %>/board/1">
@@ -9,9 +9,8 @@
     </li>
   </ul>
   <%- //include('../inc/pager.ejs') %> 
- <div class="text-center my-4">
+  <div class="text-center my-4">
     <a href="/<%= currents[0] %>/board?type=create" class="btn btn-primary">글작성</a>
   </div>
 </article>
-<script src="/js/board/board.js">
-</script>
+<script src="/js/board/board.js"></script>
