@@ -1,21 +1,20 @@
 const bcrypt = require('bcrypt');
 const { getSeparateString } = require('../modules/util');
-
 const generateUser = (_users) => {
   const users = _users.map((v) => {
     v.addr1 =
-      v.addrPost && v.addrRoad ?
-      `[${v.addrPost}] 
+      v.addrPost && v.addrRoad
+        ? `[${v.addrPost}] 
         ${v.addrRoad || ''} 
         ${v.addrComment || ''}
-        ${v.addrDetail || ''}` :
-      '';
+        ${v.addrDetail || ''}`
+        : '';
     v.addr2 =
-      v.addrPost && v.addrJibun ?
-      `[${v.addrPost}] 
+      v.addrPost && v.addrJibun
+        ? `[${v.addrPost}] 
         ${v.addrJibun}
-        ${v.addrDetail || ''}` :
-      '';
+        ${v.addrDetail || ''}`
+        : '';
     v.level = '';
     switch (v.status) {
       case '0':
@@ -40,6 +39,27 @@ const generateUser = (_users) => {
     return v;
   });
   return users;
+};
+const generateWhere = (sequelize, Op, { field, search }) => {
+  let where = search ? { [field]: { [Op.like]: '%' + search + '%' } } : null;
+  if (field === 'tel' && search !== '') {
+    where = sequelize.where(
+      sequelize.fn('replace', sequelize.col('tel'), '-', ''),
+      { [Op.like]: '%' + search.replace(/-/g, '') + '%' }
+    );
+  }
+  if (field === 'addrRoad' && search !== '') {
+    where = {
+      [Op.or]: {
+        addrPost: { [Op.like]: '%' + search + '%' },
+        addrRoad: { [Op.like]: '%' + search + '%' },
+        addrJibun: { [Op.like]: '%' + search + '%' },
+        addrComment: { [Op.like]: '%' + search + '%' },
+        addrDetail: { [Op.like]: '%' + search + '%' },
+      },
+    };
+  }
+  return where;
 };
 
 module.exports = (sequelize, { DataTypes, Op }) => {
@@ -144,44 +164,26 @@ module.exports = (sequelize, { DataTypes, Op }) => {
     user.tel = getSeparateString([user.tel1, user.tel2, user.tel3], '-');
   });
 
-    User.beforeUpdate(async (user) => {
+  User.beforeUpdate(async (user) => {
     user.tel = getSeparateString([user.tel1, user.tel2, user.tel3], '-');
   });
 
+  User.getCount = async function (query) {
+    return await this.count({
+      where: generateWhere(sequelize, Op, query),
+    });
+  };
 
   User.searchUser = async function (query, pager) {
-    let { field = 'id', search = '', sort = 'desc' } = query;
-    let where = search ? { [field]: { [Op.like]: '%' + search + '%' } } : null;
-    if (field === 'tel' && search !== '') {
-      search = search.replace(/-/g, '')
-      where = sequelize.where(
-        sequelize.fn('replace', sequelize.col('tel'), '-', ''), 
-        { 
-          [Op.like]:'%'+search+'%'
-        }
-      ); // where 요청 메서드
-    }
-
-    if (field === 'addrRoad' && search !== '') {
-      where = {
-        [Op.or]: {
-          addrPost: { [Op.like]: '%' + search + '%' },
-          addrRoad: { [Op.like]: '%' + search + '%' },
-          addrJibun: { [Op.like]: '%' + search + '%' },
-          addrComment: { [Op.like]: '%' + search + '%' },
-          addrDetail: { [Op.like]: '%' + search + '%' },
-        },
-      };
-    }
+    let { field = 'id', sort = 'desc' } = query;
     const rs = await this.findAll({
       order: [[field || 'id', sort || 'desc']],
       offset: pager.startIdx,
       limit: pager.listCnt,
-      where,
+      where: generateWhere(sequelize, Op, query),
     });
     const users = generateUser(rs);
     return users;
   };
-
   return User;
 };

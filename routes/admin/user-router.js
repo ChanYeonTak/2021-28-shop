@@ -3,8 +3,9 @@ const express = require('express');
 const router = express.Router();
 const createError = require('http-errors');
 const { telNumber, alert, getSummaryArray } = require('../../modules/util');
-const { User, Sequelize } = require('../../models');
+const { User } = require('../../models');
 const pager = require('../../middlewares/pager-mw');
+const numeral = require('numeral');
 
 // 회원 등록 화면
 router.get('/', (req, res, next) => {
@@ -29,7 +30,8 @@ router.get('/', pager(User), async (req, res, next) => {
       users,
       field,
       sort,
-      search
+      search,
+      numeral
     };
     res.render('admin/user/user-list', ejs);
   } catch (err) {
