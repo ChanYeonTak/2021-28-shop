@@ -1,20 +1,22 @@
 const bcrypt = require('bcrypt');
-const { getSeparateString } = require('../modules/util');
+const {
+  getSeparateString
+} = require('../modules/util');
 const generateUser = (_users) => {
   const users = _users.map((v) => {
     v.addr1 =
-      v.addrPost && v.addrRoad
-        ? `[${v.addrPost}] 
+      v.addrPost && v.addrRoad ?
+      `[${v.addrPost}] 
         ${v.addrRoad || ''} 
         ${v.addrComment || ''}
-        ${v.addrDetail || ''}`
-        : '';
+        ${v.addrDetail || ''}` :
+      '';
     v.addr2 =
-      v.addrPost && v.addrJibun
-        ? `[${v.addrPost}] 
+      v.addrPost && v.addrJibun ?
+      `[${v.addrPost}] 
         ${v.addrJibun}
-        ${v.addrDetail || ''}`
-        : '';
+        ${v.addrDetail || ''}` :
+      '';
     v.level = '';
     switch (v.status) {
       case '0':
@@ -40,32 +42,52 @@ const generateUser = (_users) => {
   });
   return users;
 };
-const generateWhere = (sequelize, Op, { field, search }) => {
-  let where = search ? { [field]: { [Op.like]: '%' + search + '%' } } : null;
+const generateWhere = (sequelize, Op, {
+  field,
+  search
+}) => {
+  let where = search ? {
+    [field]: {
+      [Op.like]: '%' + search + '%'
+    }
+  } : null;
   if (field === 'tel' && search !== '') {
     where = sequelize.where(
-      sequelize.fn('replace', sequelize.col('tel'), '-', ''),
-      { [Op.like]: '%' + search.replace(/-/g, '') + '%' }
+      sequelize.fn('replace', sequelize.col('tel'), '-', ''), {
+        [Op.like]: '%' + search.replace(/-/g, '') + '%'
+      }
     );
   }
   if (field === 'addrRoad' && search !== '') {
     where = {
       [Op.or]: {
-        addrPost: { [Op.like]: '%' + search + '%' },
-        addrRoad: { [Op.like]: '%' + search + '%' },
-        addrJibun: { [Op.like]: '%' + search + '%' },
-        addrComment: { [Op.like]: '%' + search + '%' },
-        addrDetail: { [Op.like]: '%' + search + '%' },
+        addrPost: {
+          [Op.like]: '%' + search + '%'
+        },
+        addrRoad: {
+          [Op.like]: '%' + search + '%'
+        },
+        addrJibun: {
+          [Op.like]: '%' + search + '%'
+        },
+        addrComment: {
+          [Op.like]: '%' + search + '%'
+        },
+        addrDetail: {
+          [Op.like]: '%' + search + '%'
+        },
       },
     };
   }
   return where;
 };
 
-module.exports = (sequelize, { DataTypes, Op }) => {
+module.exports = (sequelize, {
+  DataTypes,
+  Op
+}) => {
   const User = sequelize.define(
-    'User',
-    {
+    'User', {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
         primaryKey: true,
@@ -144,8 +166,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       tel3: {
         type: DataTypes.VIRTUAL,
       },
-    },
-    {
+    }, {
       charset: 'utf8',
       collate: 'utf8_general_ci',
       tableName: 'user',
@@ -154,11 +175,23 @@ module.exports = (sequelize, { DataTypes, Op }) => {
   );
 
   User.associate = (models) => {
-    User.hasMany(models.Board);
+    User.hasMany(models.Board, {
+      foreignKey: {
+        name: 'user_id',
+        allowNull: false
+      },
+      sourceKey: 'id',
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
+
+    });
   };
 
   User.beforeCreate(async (user) => {
-    const { BCRYPT_SALT: salt, BCRYPT_ROUND: rnd } = process.env;
+    const {
+      BCRYPT_SALT: salt,
+      BCRYPT_ROUND: rnd
+    } = process.env;
     const hash = await bcrypt.hash(user.userpw + salt, Number(rnd));
     user.userpw = hash;
     user.tel = getSeparateString([user.tel1, user.tel2, user.tel3], '-');
@@ -175,9 +208,13 @@ module.exports = (sequelize, { DataTypes, Op }) => {
   };
 
   User.searchUser = async function (query, pager) {
-    let { field = 'id', sort = 'desc' } = query;
+    let {
+      field = 'id', sort = 'desc'
+    } = query;
     const rs = await this.findAll({
-      order: [[field || 'id', sort || 'desc']],
+      order: [
+        [field || 'id', sort || 'desc']
+      ],
       offset: pager.startIdx,
       limit: pager.listCnt,
       where: generateWhere(sequelize, Op, query),

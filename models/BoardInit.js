@@ -1,4 +1,7 @@
-module.exports = (sequelize, { DataTypes, OP}) => {
+module.exports = (sequelize, {
+  DataTypes,
+  OP
+}) => {
   const BoardInit = sequelize.define(
     'BoardInit', {
       id: {
@@ -41,5 +44,18 @@ module.exports = (sequelize, { DataTypes, OP}) => {
       paranoid: true,
     },
   );
+
+  BoardInit.associate = (models) => {
+    BoardInit.hasMany(models.Board, {
+      foreignKey: {
+        name: 'binit_id',
+        allowNull: false
+      },
+      sourceKey: 'id',
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
+    });
+  };
+
   return BoardInit
 }
