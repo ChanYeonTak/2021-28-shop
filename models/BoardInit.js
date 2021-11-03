@@ -16,8 +16,8 @@ module.exports = (sequelize, {
       },
       boardType: {
         type: DataTypes.ENUM,
-        values: ['D', 'G'],
-        defaultValue: 'D',
+        values: ['default', 'gallery'],
+        defaultValue: 'default',
         allowNull: false
       },
       useImg: {
