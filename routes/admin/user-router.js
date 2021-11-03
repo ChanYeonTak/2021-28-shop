@@ -85,9 +85,16 @@ router.put('/', async (req, res, next) => {
 });
 
 // 회원 삭제
-router.delete('/', (req, res, next) => {
-  res.send('/admin/user:DELETE');
-});
+router.delete('/', async (req, res, next) => {
+  try { 
+    await User.destroy({ 
+      where: { id: req.body.id }
+    });
+    res.send(alert('회원을 삭제하였습니다.', '/admin/user'));
+  } catch (err) {
+    next(createError(err));
+  }
+  });
 
 module.exports = {
   name: '/user',
