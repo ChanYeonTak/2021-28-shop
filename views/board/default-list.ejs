@@ -11,20 +11,24 @@
       </tr>
     </thead>
     <tbody>
+
       <tr>
         <td>1</td>
         <td class="text-left">
-          <a href="/<%= currents[0] %>/board/1?type=default">공지사항 입니다.</a>
+          <a href="/<%= currents[0] %>/board/1?type=default">
+            
+          </a>
         </td>
         <td>관리자</td>
         <td>2021-10-28</td>
         <td>10</td>
       </tr>
+
     </tbody>
   </table>
   <%- //include('../inc/pager.ejs') %>
   <div class="text-center my-4">
-    <a href="/<%= currents[0] %>/board?type=create" class="btn btn-primary">글작성</a>
+    <a href="/<%= currents[0] %>/board?type=create&boardId=<%= boardId%>" class="btn btn-primary">글작성</a>
   </div>
 </article>
 <script src="/js/board/board.js"></script>
