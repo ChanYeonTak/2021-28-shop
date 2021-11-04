@@ -3,6 +3,9 @@ const express = require('express');
 const router = express.Router();
 const { error } = require('../../modules/util');
 const boardInit = require('../../middlewares/boardinit-mw');
+const uploader = require('../../middlewares/multer-mw')
+const afterUploader = require('../../middlewares/after-multer-mw')
+const { Board, BoardFile } = require('../../models')
 
 // 신규글 작성
 router.get('/', boardInit, (req, res, next) => {
@@ -28,9 +31,20 @@ router.get('/:id', (req, res, next) => {
   }
 });
 
-router.post('/', (req, res, next) => {
-  res.send('/admin/board:POST');
-});
+router.post('/', 
+  boardInit,
+  uploader.fields([{ name:'img'}, {name:'pds'}]),
+  afterUploader(['img','pds']),
+  async (req, res, next) => {
+   req.body.user_id = 1; // 회원 작업 후 수정
+   //await Board.create(req.body);
+   //await BoardFile.create(req.files);
+   res.json({
+     body: req.body,
+     file: req.files,
+   })
+  }
+);
 
 router.put('/', (req, res, next) => {
   res.send('/admin/board:PUT');
