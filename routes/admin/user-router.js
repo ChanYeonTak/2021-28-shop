@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const router = express.Router();
 const createError = require('http-errors');
-const { telNumber, alert, getSummaryArray } = require('../../modules/util');
+const { telNumber, alert, getSeparateArray } = require('../../modules/util');
 const { User } = require('../../models');
 const pager = require('../../middlewares/pager-mw');
 const numeral = require('numeral');
@@ -47,7 +47,7 @@ router.get('/:id', async (req, res, next) => {
         id: req.params.id
       }
     });
-    user.tel = getSummaryArray(user.tel, '-');
+    user.tel = getSeparateArray(user.tel, '-');
     const ejs = {
       telNumber,
       user

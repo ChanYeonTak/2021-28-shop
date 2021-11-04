@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs-extra');
+const moment = require('moment');
 
 const location = (src) => path.join(__dirname, '../', src);
 
@@ -98,8 +99,73 @@ const getSeparateString = (arr, division = '-') => {
 	return arr.includes('') || arr.includes(undefined) ? '' : arr.join(division);
 };
 
-const getSummaryArray = (str, division = '-') => {
+const getSeparateArray = (str, division = '-') => {
 	return str.includes(division) ? str.split(division) : [];
+};
+
+const dateFormat = (_date = new Date(), _type = 'D') => {
+	/* 
+	D: 2021-11-04
+	KD: 2021년 11월 4일
+	H: 2021-11-04 13:11:01
+	KH: 2021년 11월 4일 13시 11분 1초
+	*/
+	let type = '';
+	switch (_type) {
+		case 'D':
+			type = 'YYYY-MM-DD';
+			break;
+		case 'H':
+			type = 'YYYY-MM-DD HH:mm:ss';
+			break;
+		case 'KD':
+			type = 'YYYY년 M월 D일';
+			break;
+		case 'KH':
+			type = 'YYYY년 M월 D일 H시 m분 s초';
+			break;
+	}
+	return moment(_date).format(type);
+};
+
+const getWhere = (sequelize, Op, {
+	field,
+	search
+}) => {
+	let where = search ? {
+		[field]: {
+			[Op.like]: '%' + search + '%'
+		}
+	} : null;
+	if (field === 'tel' && search !== '') {
+		where = sequelize.where(
+			sequelize.fn('replace', sequelize.col('tel'), '-', ''), {
+				[Op.like]: '%' + search.replace(/-/g, '') + '%'
+			}
+		);
+	}
+	if (field === 'addrRoad' && search !== '') {
+		where = {
+			[Op.or]: {
+				addrPost: {
+					[Op.like]: '%' + search + '%'
+				},
+				addrRoad: {
+					[Op.like]: '%' + search + '%'
+				},
+				addrJibun: {
+					[Op.like]: '%' + search + '%'
+				},
+				addrComment: {
+					[Op.like]: '%' + search + '%'
+				},
+				addrDetail: {
+					[Op.like]: '%' + search + '%'
+				},
+			},
+		};
+	}
+	return where;
 };
 
 module.exports = {
@@ -115,5 +181,7 @@ module.exports = {
 	alert,
 	telNumber,
 	getSeparateString,
-	getSummaryArray
+	getSeparateArray,
+	dateFormat,
+	getWhere,
 };
