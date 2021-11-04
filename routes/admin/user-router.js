@@ -10,9 +10,7 @@ const numeral = require('numeral');
 // 회원 등록 화면
 router.get('/', (req, res, next) => {
   if (req.query.type === 'create') {
-    const ejs = {
-      telNumber
-    };
+    const ejs = { telNumber };
     res.render('admin/user/user-form', ejs);
   } else next();
 });
@@ -20,10 +18,8 @@ router.get('/', (req, res, next) => {
 // 회원리스트
 router.get('/', pager(User), async (req, res, next) => {
   try {
-    let {
-      field = 'id', search = '', sort = 'desc'
-    } = req.query;
-    const users = await User.searchUser(req.query, req.pager);
+    let { field = 'id', search = '', sort = 'desc' } = req.query;
+    const users = await User.searchList(req.query, req.pager);
     const ejs = {
       telNumber,
       pager: req.pager,
@@ -31,7 +27,7 @@ router.get('/', pager(User), async (req, res, next) => {
       field,
       sort,
       search,
-      numeral
+      numeral,
     };
     res.render('admin/user/user-list', ejs);
   } catch (err) {
@@ -42,16 +38,9 @@ router.get('/', pager(User), async (req, res, next) => {
 // 회원 수정 화면
 router.get('/:id', async (req, res, next) => {
   try {
-    const user = await User.findOne({
-      where: {
-        id: req.params.id
-      }
-    });
+    const user = await User.findOne({ where: { id: req.params.id } });
     user.tel = getSeparateArray(user.tel, '-');
-    const ejs = {
-      telNumber,
-      user
-    };
+    const ejs = { telNumber, user };
     res.render('admin/user/user-update', ejs);
   } catch (err) {
     next(createError(err));
@@ -61,7 +50,7 @@ router.get('/:id', async (req, res, next) => {
 // 회원 저장
 router.post('/', async (req, res, next) => {
   try {
-    await User.create(req.body);
+    const user = await User.create(req.body);
     res.send(alert('회원가입이 완료되었습니다.', '/admin/user'));
   } catch (err) {
     next(createError(err));
@@ -72,9 +61,7 @@ router.post('/', async (req, res, next) => {
 router.put('/', async (req, res, next) => {
   try {
     const [rs] = await User.update(req.body, {
-      where: {
-        id: req.body.id
-      },
+      where: { id: req.body.id },
       individualHooks: true,
     });
     if (rs) res.send(alert('회원수정이 완료되었습니다.', '/admin/user'));
@@ -85,18 +72,8 @@ router.put('/', async (req, res, next) => {
 });
 
 // 회원 삭제
-router.delete('/', async (req, res, next) => {
-  try { 
-    await User.destroy({ 
-      where: { id: req.body.id }
-    });
-    res.send(alert('회원을 삭제하였습니다.', '/admin/user'));
-  } catch (err) {
-    next(createError(err));
-  }
-  });
+router.delete('/', (req, res, next) => {
+  res.send('/admin/user:DELETE');
+});
 
-module.exports = {
-  name: '/user',
-  router
-};
+module.exports = { name: '/user', router };

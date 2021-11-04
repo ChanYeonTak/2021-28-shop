@@ -1,15 +1,9 @@
-const {
-  getWhere,
-  dateFormat,
-  relPath
-} = require('../modules/util');
+const { dateFormat, relPath } = require('../modules/util');
 
-module.exports = (sequelize, {
-  DataTypes,
-  Op
-}) => {
+module.exports = (sequelize, { DataTypes, Op }) => {
   const Board = sequelize.define(
-    'Board', {
+    'Board',
+    {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
         primaryKey: true,
@@ -27,7 +21,8 @@ module.exports = (sequelize, {
       content: {
         type: DataTypes.TEXT,
       },
-    }, {
+    },
+    {
       charset: 'utf8',
       collate: 'utf8_general_ci',
       tableName: 'board',
@@ -76,28 +71,18 @@ module.exports = (sequelize, {
 
   Board.getCount = async function (query) {
     return await this.count({
-      where: getWhere(sequelize, Op, query),
+      where: { ...sequelize.getWhere(query), binit_id: query.boardId },
     });
   };
 
   Board.searchList = async function (query, pager, BoardFile) {
-    let {
-      field = 'id', sort = 'desc', boardId
-    } = query;
+    let { field = 'id', sort = 'desc', boardId } = query;
     const rs = await this.findAll({
-      order: [
-        [field || 'id', sort || 'desc']
-      ],
+      order: [[field || 'id', sort || 'desc']],
       offset: pager.startIdx,
       limit: pager.listCnt,
-      where: {
-        ...getWhere(sequelize, Op, query),
-        binit_id: boardId
-      },
-      include: [{
-        model: BoardFile,
-        attributes: ['saveName']
-      }],
+      where: { ...sequelize.getWhere(query), binit_id: boardId },
+      include: [{ model: BoardFile, attributes: ['saveName'] }],
     });
     const lists = rs
       .map((v) => v.toJSON())

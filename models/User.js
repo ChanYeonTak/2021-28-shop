@@ -1,55 +1,10 @@
 const bcrypt = require('bcrypt');
-const {
-  getSeparateString,
-  getWhere
-} = require('../modules/util');
-const generateUser = (_users) => {
-  const users = _users.map((v) => {
-    v.addr1 =
-      v.addrPost && v.addrRoad ?
-      `[${v.addrPost}] 
-        ${v.addrRoad || ''} 
-        ${v.addrComment || ''}
-        ${v.addrDetail || ''}` :
-      '';
-    v.addr2 =
-      v.addrPost && v.addrJibun ?
-      `[${v.addrPost}] 
-        ${v.addrJibun}
-        ${v.addrDetail || ''}` :
-      '';
-    v.level = '';
-    switch (v.status) {
-      case '0':
-        v.level = '탈퇴회원';
-        break;
-      case '1':
-        v.level = '유휴회원';
-        break;
-      case '2':
-        v.level = '일반회원';
-        break;
-      case '8':
-        v.level = '관리자';
-        break;
-      case '9':
-        v.level = '최고관리자';
-        break;
-      default:
-        v.level = '회원';
-        break;
-    }
-    return v;
-  });
-  return users;
-};
+const { getSeparateString } = require('../modules/util');
 
-module.exports = (sequelize, {
-  DataTypes,
-  Op
-}) => {
+module.exports = (sequelize, { DataTypes, Op }) => {
   const User = sequelize.define(
-    'User', {
+    'User',
+    {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
         primaryKey: true,
@@ -128,7 +83,8 @@ module.exports = (sequelize, {
       tel3: {
         type: DataTypes.VIRTUAL,
       },
-    }, {
+    },
+    {
       charset: 'utf8',
       collate: 'utf8_general_ci',
       tableName: 'user',
@@ -149,10 +105,7 @@ module.exports = (sequelize, {
   };
 
   User.beforeCreate(async (user) => {
-    const {
-      BCRYPT_SALT: salt,
-      BCRYPT_ROUND: rnd
-    } = process.env;
+    const { BCRYPT_SALT: salt, BCRYPT_ROUND: rnd } = process.env;
     const hash = await bcrypt.hash(user.userpw + salt, Number(rnd));
     user.userpw = hash;
     user.tel = getSeparateString([user.tel1, user.tel2, user.tel3], '-');
@@ -164,24 +117,59 @@ module.exports = (sequelize, {
 
   User.getCount = async function (query) {
     return await this.count({
-      where: getWhere(sequelize, Op, query),
+      where: sequelize.getWhere(query),
     });
   };
 
-  User.searchUser = async function (query, pager) {
-    let {
-      field = 'id', sort = 'desc'
-    } = query;
+  User.searchList = async function (query, pager) {
+    let { field = 'id', sort = 'desc' } = query;
     const rs = await this.findAll({
-      order: [
-        [field || 'id', sort || 'desc']
-      ],
+      order: [[field || 'id', sort || 'desc']],
       offset: pager.startIdx,
       limit: pager.listCnt,
-      where: getWhere(sequelize, Op, query),
+      where: sequelize.getWhere(query),
     });
-    const users = generateUser(rs);
-    return users;
+    const lists = rs
+      .map((v) => v.toJSON())
+      .map((v) => {
+        v.addr1 =
+          v.addrPost && v.addrRoad
+            ? `[${v.addrPost}] 
+        ${v.addrRoad || ''} 
+        ${v.addrComment || ''}
+        ${v.addrDetail || ''}`
+            : '';
+        v.addr2 =
+          v.addrPost && v.addrJibun
+            ? `[${v.addrPost}] 
+        ${v.addrJibun}
+        ${v.addrDetail || ''}`
+            : '';
+        v.level = '';
+        switch (v.status) {
+          case '0':
+            v.level = '탈퇴회원';
+            break;
+          case '1':
+            v.level = '유휴회원';
+            break;
+          case '2':
+            v.level = '일반회원';
+            break;
+          case '8':
+            v.level = '관리자';
+            break;
+          case '9':
+            v.level = '최고관리자';
+            break;
+          default:
+            v.level = '회원';
+            break;
+        }
+        return v;
+      });
+    return lists;
   };
+
   return User;
 };
