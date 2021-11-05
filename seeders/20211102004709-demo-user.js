@@ -1,4 +1,5 @@
 'use strict';
+const numeral = require('numeral');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -9,9 +10,7 @@ module.exports = {
         userpw: '111111',
         username: '테스트유저'+i,
         email: 'test'+i+'@test.com',
-        tel1: '010',
-        tel2: String(1111+i),
-        tel3: String(2222+i),
+        tel: `010-1111-${numeral(i).format('0000')}`,
         addrPost: String(10000 + i),
         addrRoad: '서울시 마포구 노고산로',
         addrJibun: '서울시 마포구 창천동',
