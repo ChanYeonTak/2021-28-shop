@@ -125,9 +125,9 @@ module.exports = (sequelize, { DataTypes, Op }) => {
 
   User.searchList = async function (query) {
     let { field = 'id', sort = 'desc', page = 1 } = query;
-    //pager Query
+    // pager Query
     const totalRecord = await this.getCount(query);
-    const pager = createPager(page, totalRecord, _listCnt = 5, _pagerCnt = 3);
+    const pager = createPager(page, totalRecord, (_listCnt = 5), (_pagerCnt = 5));
     // find Query
     const rs = await this.findAll({
       order: [[field || 'id', sort || 'desc']],

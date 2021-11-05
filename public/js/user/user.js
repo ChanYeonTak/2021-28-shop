@@ -1,6 +1,5 @@
 // kakao 우편번호 모듈
 $('#btPostcode').click(openPostcode);
-
 function openPostcode() {
   new daum.Postcode({
     oncomplete: function (data) {
@@ -30,4 +29,12 @@ function openPostcode() {
       }
     },
   }).open();
+}
+
+$('form[name="userDeleteForm"]').submit(onUserDelete);
+function onUserDelete(e) {
+  e.preventDefault();
+  if (confirm('정말로 삭제하시겠습니까?')) {
+    this.submit();
+  }
 }

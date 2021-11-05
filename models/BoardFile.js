@@ -1,6 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const BoardFile = sequelize.define(
-    'BoardFile', {
+    'BoardFile',
+    {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
         primaryKey: true,
@@ -23,16 +24,17 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM,
         allowNull: false,
         values: ['I', 'F'],
-        defaultValue: 'F'
+        defaultValue: 'F',
       },
       size: {
         type: DataTypes.INTEGER(10),
         allowNull: false,
       },
-    }, {
+    },
+    {
       charset: 'utf8',
       collate: 'utf8_general_ci',
-      tableName: 'boardFile',
+      tableName: 'boardfile',
       paranoid: true,
     }
   );
@@ -41,13 +43,13 @@ module.exports = (sequelize, DataTypes) => {
     BoardFile.belongsTo(models.Board, {
       foreignKey: {
         name: 'board_id',
-        allowNull: false
+        allowNull: false,
       },
       sourceKey: 'id',
       onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
     });
-  }
+  };
 
   return BoardFile;
 };

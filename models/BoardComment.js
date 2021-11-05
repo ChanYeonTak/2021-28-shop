@@ -1,6 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const BoardComment = sequelize.define(
-    'BoardComment', {
+    'BoardComment',
+    {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
         primaryKey: true,
@@ -12,13 +13,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       comment: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
-    }, {
+    },
+    {
       charset: 'utf8',
       collate: 'utf8_general_ci',
-      tableName: 'boardComment',
+      tableName: 'boardcomment',
       paranoid: true,
     }
   );
@@ -27,13 +29,13 @@ module.exports = (sequelize, DataTypes) => {
     BoardComment.belongsTo(models.Board, {
       foreignKey: {
         name: 'board_id',
-        allowNull: false
+        allowNull: false,
       },
       sourceKey: 'id',
       onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
     });
-  }
+  };
 
   return BoardComment;
 };

@@ -1,9 +1,7 @@
-module.exports = (sequelize, {
-  DataTypes,
-  OP
-}) => {
+module.exports = (sequelize, { DataTypes, Op }) => {
   const BoardInit = sequelize.define(
-    'BoardInit', {
+    'BoardInit',
+    {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
         primaryKey: true,
@@ -18,44 +16,45 @@ module.exports = (sequelize, {
         type: DataTypes.ENUM,
         values: ['default', 'gallery'],
         defaultValue: 'default',
-        allowNull: false
+        allowNull: false,
       },
       useImg: {
         type: DataTypes.ENUM,
-        values: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', ],
+        values: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: '0',
       },
       useFile: {
         type: DataTypes.ENUM,
         values: ['0', '1', '2'],
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: '0',
       },
       useComment: {
         type: DataTypes.BOOLEAN,
+        allowNull: false,
         defaultValue: false,
-        allowNull: false
       },
-    }, {
+    },
+    {
       charset: 'utf8',
       collate: 'utf8_general_ci',
-      tableName: 'boardInit',
+      tableName: 'boardinit',
       paranoid: true,
-    },
+    }
   );
 
   BoardInit.associate = (models) => {
     BoardInit.hasMany(models.Board, {
       foreignKey: {
         name: 'binit_id',
-        allowNull: false
+        allowNull: false,
       },
       sourceKey: 'id',
       onUpdate: 'CASCADE',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
     });
   };
 
-  return BoardInit
-}
+  return BoardInit;
+};
