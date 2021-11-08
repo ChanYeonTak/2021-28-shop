@@ -4,7 +4,6 @@ const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config')[env];
-config.timezone = '+09:00';
 const db = {};
 
 Sequelize.prototype.getWhere = function ({ field, search }) {
