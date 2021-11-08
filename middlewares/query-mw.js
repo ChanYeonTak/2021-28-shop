@@ -14,24 +14,38 @@ module.exports = (_field = 'query', addQuery = []) => {
     }
     for (let [k, v] of Object.entries(req[_field])) res.locals[k] = v;
 
-    res.locals.goList = `?page=${page}`;
+    
+    let goQuery = '';
+    let goPath = `/${res.locals.currents[0]}/${res.locals.currents[1]}?`;
+        // goList 부분
     if (res.locals.currents[1] === 'board') {
-      res.locals.goList += `&boardId=${boardId}&`;
+      goQuery += `&boardId=${req[_field].boardId}`;
+      goQuery  += `&boardType=${req[_field].boardType}`;
     }
+
     if (req[_field].field && req[_field].search) {
-      res.locals.goList += `&field=${req[_field].field}`;
-      res.locals.goList += `&search=${req[_field].search}`;
+      goQuery  += `&field=${req[_field].field}`;
+      goQuery  += `&search=${req[_field].search}`;
     }
+
     if (req[_field].sort) {
-      res.locals.goList += `&sort=${req[_field].sort}`;
+      res.locals.goPager += res.locals.goPager === '' ? '?' : '&';
+      res.locals.goPager += `sort=${req[_field].sort}`;
     }
-    res.locals.goLists = [
+
+    req.locals.goPager = goPath + '?' + goQuery; 
+    req.locals.goList = goPath + '?' + goQuery + `$page=${req[_field].page}`;
+    res.locals.goPath = goPath
+    res.locals.goQuery = goQuery + `$page=${req[_field].page}`;
+  
+    res.locals.goPagers = [
       { page: req[_field].page },
       { boardId: req[_field].boardId },
       { field: req[_field].field },
       { search: req[_field].search },
       { sort: req[_field].sort },
     ];
+
     next();
   };
 };
