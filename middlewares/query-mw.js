@@ -14,38 +14,35 @@ module.exports = (_field = 'query', addQuery = []) => {
     }
     for (let [k, v] of Object.entries(req[_field])) res.locals[k] = v;
 
-    
+    let goPath = `/${res.locals.currents[0]}/${res.locals.currents[1]}`;
     let goQuery = '';
-    let goPath = `/${res.locals.currents[0]}/${res.locals.currents[1]}?`;
-        // goList 부분
     if (res.locals.currents[1] === 'board') {
       goQuery += `&boardId=${req[_field].boardId}`;
-      goQuery  += `&boardType=${req[_field].boardType}`;
+      goQuery += `&boardType=${req[_field].boardType}`;
     }
-
     if (req[_field].field && req[_field].search) {
-      goQuery  += `&field=${req[_field].field}`;
-      goQuery  += `&search=${req[_field].search}`;
+      goQuery += `&field=${req[_field].field}`;
+      goQuery += `&search=${req[_field].search}`;
     }
-
     if (req[_field].sort) {
-      res.locals.goPager += res.locals.goPager === '' ? '?' : '&';
-      res.locals.goPager += `sort=${req[_field].sort}`;
+      goQuery += `&sort=${req[_field].sort}`;
     }
 
-    req.locals.goPager = goPath + '?' + goQuery; 
-    req.locals.goList = goPath + '?' + goQuery + `$page=${req[_field].page}`;
-    res.locals.goPath = goPath
-    res.locals.goQuery = goQuery + `$page=${req[_field].page}`;
-  
-    res.locals.goPagers = [
-      { page: req[_field].page },
-      { boardId: req[_field].boardId },
-      { field: req[_field].field },
-      { search: req[_field].search },
-      { sort: req[_field].sort },
-    ];
+    res.locals.goPager = goPath + '?' + goQuery;
+    res.locals.goList = goPath + '?' + goQuery + `&page=${req[_field].page}`;
+    res.locals.goPath = goPath;
+    res.locals.goQuery = goQuery + `&page=${req[_field].page}`;
 
+    res.locals.goLists = [
+      { key: 'page', value: req[_field].page },
+      { key: 'field', value: req[_field].field },
+      { key: 'search', value: req[_field].search },
+      { key: 'sort', value: req[_field].sort },
+    ];
+    if (res.locals.currents[1] === 'board') {
+      res.locals.goLists.push({ key: 'boardId', value: req[_field].boardId });
+      res.locals.goLists.push({ key: 'boardType', value: req[_field].boardType });
+    }
     next();
   };
 };
