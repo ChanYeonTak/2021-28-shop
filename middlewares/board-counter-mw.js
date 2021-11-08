@@ -12,7 +12,15 @@ module.exports = async (req, res, next) => {
       user_id, 
       board_id : req.params.id,
     });
-    // await Board.update()
+    const count = await BoardCounter.count({
+      distinct: true, 
+      col: 'ip',
+      where: { board_id : req.params.id }
+    });
+    await Board.update({ readCounter: count }, 
+      { where: 
+        { id: req.params.id }
+      });
     next();
   } catch (err) {
     next(err)
