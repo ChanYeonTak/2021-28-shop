@@ -1,7 +1,6 @@
 @import '../common';
 
 .login-wrapper {
-  background: url(/img/admin/typewriter.jpg) no-repeat center;
   background-size: cover;
   width: 100%;
   height: 100vh;
@@ -12,7 +11,7 @@
     text-align: left;
     font-size: 1.5em;
     margin-bottom: 0.5em;
-    color: $white-color;
+    color: $grey-color;
   }
   .login-wrap {
     background-color: $white-color;
