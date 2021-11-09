@@ -104,7 +104,9 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
+  };
 
+  User.associate = (models) => {
     User.hasMany(models.BoardCounter, {
       foreignKey: {
         name: 'user_id',
@@ -114,7 +116,6 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
-
   };
 
   User.beforeCreate(async (user) => {
@@ -127,6 +128,15 @@ module.exports = (sequelize, { DataTypes, Op }) => {
   User.beforeUpdate(async (user) => {
     user.tel = getSeparateString([user.tel1, user.tel2, user.tel3], '-');
   });
+
+  User.loginUser = async function (userid, userpw) {
+    const { BCRYPT_SALT: salt } = process.env;
+    const user = await this.findOne({ where: { userid } });
+    if (user && user.userpw) {
+      const success = await bcrypt.compare(userpw + salt, user.userpw);
+      return success ? user : null;
+    } else return null;
+  };
 
   User.getCount = async function (query) {
     return await this.count({

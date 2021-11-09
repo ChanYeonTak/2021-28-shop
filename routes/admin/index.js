@@ -13,4 +13,8 @@ fs.readdirSync(__dirname)
     router.use(name, childRouter);
   });
 
+  router.get('/', (req, res, next) => {
+    res.redirect('/admin/main')
+  })
+  
 module.exports = router;
