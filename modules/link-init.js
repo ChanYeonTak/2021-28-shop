@@ -6,6 +6,7 @@ module.exports = {
       {
         path: '/admin/user',
         link: '/admin/user',
+        status: 8,
         src: 'b1',
       },
       {
@@ -21,6 +22,7 @@ module.exports = {
       {
         path: ['/admin/board', '/admin/binit'],
         link: '/admin/binit',
+        status: 8,
         src: 'b4',
       },
       /* {
