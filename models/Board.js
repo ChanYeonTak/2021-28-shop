@@ -24,10 +24,10 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       content: {
         type: DataTypes.TEXT,
       },
-      readCounter : {
+      readCounter: {
         type: DataTypes.INTEGER(10).UNSIGNED,
-        defaultValue: 0,
-      }
+        defaulValue: 0,
+      },
     },
     {
       charset: 'utf8',
@@ -74,7 +74,6 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
-
     Board.hasMany(models.BoardCounter, {
       foreignKey: {
         name: 'board_id',
@@ -84,7 +83,6 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
-
   };
 
   Board.getCount = async function (query) {
@@ -100,7 +98,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       .map((v) => v.toJSON())
       .map((v) => {
         v.updatedAt = dateFormat(v.updatedAt, type === 'view' ? 'H' : 'D');
-        v.readCounter = numeral(v.readCounter).format();  
+        v.readCounter = numeral(v.readCounter).format();
         v.imgs = [];
         v.files = [];
         if (v.BoardFiles.length) {
@@ -110,7 +108,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
               name: file.oriName,
               id: file.id,
               type: file.fileType,
-            }
+            };
             if (obj.type === 'F') v.files.push(obj);
             else v.imgs.push(obj);
           }
@@ -121,6 +119,27 @@ module.exports = (sequelize, { DataTypes, Op }) => {
         return v;
       });
     return data;
+  };
+
+  Board.getList = async function (id, query, BoardFile, BoardComment) {
+    let { page2 } = query;
+    let listCnt = 10;
+    let pagerCnt = 5;
+    const totalRecord = await BoardComment.count({ where: { board_id: id } });
+    const pager = createPager(page2 || 1, totalRecord, listCnt, pagerCnt);
+    const lists = await this.findAll({
+      where: { id },
+      include: [
+        { model: BoardFile },
+        {
+          model: BoardComment,
+          order: [['id', 'desc']],
+          offset: pager.startIdx,
+          limit: listCnt,
+        },
+      ],
+    });
+    return { lists, pager };
   };
 
   Board.getLists = async function (query, BoardFile) {
