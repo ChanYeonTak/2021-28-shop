@@ -1,6 +1,11 @@
 var core = {};
-var plugins = ['contextmenu', 'dnd', 'search', 'state', 'wholerow', 'changed'];
+var plugins = ['contextmenu', 'dnd', 'search', 'state', 'wholerow', 'changed', 'types'];
 
+var types = {
+  default: {
+    max_depth: 2,
+  },
+}
 core.themes = {
   variant: 'large',
   striped: true,
@@ -47,7 +52,7 @@ function onUpdateTree() {
 }
 
 $('#jstreeWrap')
-  .jstree({ core: core, plugins: plugins })
+  .jstree({ core: core, plugins: plugins, types })
   .on('create_node.jstree', onCreateTree)
   .on('rename_node.jstree', onUpdateTree)
   .on('move_node.jstree', onUpdateTree)
