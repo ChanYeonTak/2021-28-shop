@@ -104,7 +104,6 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
-
     User.hasMany(models.BoardCounter, {
       foreignKey: {
         name: 'user_id',
@@ -114,7 +113,6 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
-
     User.hasMany(models.BoardComment, {
       foreignKey: {
         name: 'user_id',
@@ -183,26 +181,26 @@ module.exports = (sequelize, { DataTypes, Op }) => {
         v.level = '';
         switch (v.status) {
           case '0':
-          v.level = '탈퇴회원';
-          break;
+            v.level = '탈퇴회원';
+            break;
           case '1':
-          v.level = '유휴회원';
-          break;
+            v.level = '유휴회원';
+            break;
           case '2':
-          v.level = '일반회원';
-          break;
+            v.level = '일반회원';
+            break;
           case '7':
-          v.level = '일반관리자';
-          break;
+            v.level = '관리자';
+            break;
           case '8':
-          v.level = '중간관리자';
-          break;
+            v.level = '중간관리자';
+            break;
           case '9':
-          v.level = '최고관리자';
-          break;
+            v.level = '최고관리자';
+            break;
           default:
-          v.level = '회원';
-          break;
+            v.level = '회원';
+            break;
         }
         return v;
       });

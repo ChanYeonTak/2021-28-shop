@@ -34,8 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
-
-  BoardCounter.belongsTo(models.User, {
+    BoardCounter.belongsTo(models.User, {
       foreignKey: {
         name: 'user_id',
         allowNull: true,

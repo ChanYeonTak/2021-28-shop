@@ -1,4 +1,4 @@
-const { dateFormat } = require('../modules/util')
+const { dateFormat } = require('../modules/util');
 
 module.exports = (sequelize, DataTypes) => {
   const BoardComment = sequelize.define(
@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.VIRTUAL,
         get() {
           return dateFormat(this.getDataValue('createdAt'), 'H');
-        }
-      }
+        },
+      },
     },
     {
       charset: 'utf8',
@@ -43,9 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
-  };
-
-  BoardComment.associate = (models) => {
     BoardComment.belongsTo(models.User, {
       foreignKey: {
         name: 'user_id',
