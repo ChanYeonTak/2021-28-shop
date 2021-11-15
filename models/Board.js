@@ -104,7 +104,8 @@ module.exports = (sequelize, { DataTypes, Op }) => {
         if (v.BoardFiles.length) {
           for (let file of v.BoardFiles) {
             let obj = {
-              thumbSrc: relPath(file.saveName),
+              thumbSrc: 
+              file.fileType === 'I' ? relPath(file.saveName) : null,
               name: file.oriName,
               id: file.id,
               type: file.fileType,
@@ -112,6 +113,9 @@ module.exports = (sequelize, { DataTypes, Op }) => {
             if (obj.type === 'F') v.files.push(obj);
             else v.imgs.push(obj);
           }
+        }
+        if(!v.imgs.length) { 
+          v.imgs[0] = { thumbSrc : 'https://via.placeholder.com/300?text=No+Image' };
         }
         delete v.createdAt;
         delete v.deletedAt;
@@ -156,7 +160,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       where: {
         [Op.and]: [{ ...sequelize.getWhere(query) }, { binit_id: boardId }],
       },
-      include: [{ model: BoardFile, attributes: ['saveName'] }],
+      include: [{ model: BoardFile, attributes: ['saveName', 'fileType'] }],
     });
     const lists = this.getViewData(rs);
 
