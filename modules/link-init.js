@@ -6,7 +6,7 @@ module.exports = {
       {
         path: '/admin/user',
         link: '/admin/user',
-        status: 8,
+        status: 7,
         src: 'b1',
       },
       {
@@ -17,12 +17,12 @@ module.exports = {
       {
         path: '/admin/order',
         link: '/admin/order',
+        status: 7,
         src: 'b3',
       },
       {
         path: ['/admin/board', '/admin/binit'],
         link: '/admin/binit',
-        status: 8,
         src: 'b4',
       },
       /* {
@@ -32,7 +32,7 @@ module.exports = {
       }, */
       {
         path: '//analytics.google.com',
-        link: '/admin/analytics',
+        link: '//analytics.google.com',
         src: 'b9',
         target: '_blank',
       },
@@ -56,4 +56,4 @@ module.exports = {
       { path: '/admin/board', name: '게시물 관리' },
     ],
   },
-}
+};
