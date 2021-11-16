@@ -4,9 +4,11 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const imgs = fs.readdirSync(path.join(__dirname, '../storages/211109'));
     const details = fs.readdirSync(path.join(__dirname, '../storages/211110'));
+    imgs.splice(files.indexOf('thumb'), 1);
+    details.splice(files.indexOf('thumb'), 1);
     const insertFile = [];
-    for (let i = 1; i < 100; i++) {
-      for (let j = 1; j < 5; j++) {
+    for (let i = 1; i <= 100; i++) {
+      for (let j = 1; j <= 5; j++) {
         insertFile.push({
           prd_id: i,
           oriName: `상품이미지_${i}_${j}.jpg`,
@@ -19,7 +21,7 @@ module.exports = {
           updatedAt: new Date(),
         });
       }
-      for (let j = 1; j < 2; j++) {
+      for (let j = 1; j <= 2; j++) {
         insertFile.push({
           prd_id: i,
           oriName: `상세이미지_${i}_${j}.jpg`,
@@ -37,6 +39,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkDelete('cate', null, {});
+    await queryInterface.bulkDelete('productfile', null, {});
   },
 };
