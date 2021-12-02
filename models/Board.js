@@ -88,7 +88,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
   Board.getCount = async function (query) {
     return await this.count({
       where: {
-        [Op.and]: [{ ...sequelize.getWhere(query) }, { binit_id: query.boardId }],
+        [Op.and]: [sequelize.getWhere(query), { binit_id: query.boardId }],
       },
     });
   };
@@ -104,8 +104,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
         if (v.BoardFiles.length) {
           for (let file of v.BoardFiles) {
             let obj = {
-              thumbSrc: 
-              file.fileType === 'I' ? relPath(file.saveName) : null,
+              thumbSrc: file.fileType === 'I' ? relPath(file.saveName) : null,
               name: file.oriName,
               id: file.id,
               type: file.fileType,
@@ -114,8 +113,10 @@ module.exports = (sequelize, { DataTypes, Op }) => {
             else v.imgs.push(obj);
           }
         }
-        if(!v.imgs.length) { 
-          v.imgs[0] = { thumbSrc : 'https://via.placeholder.com/300?text=No+Image' };
+        if (!v.imgs.length) {
+          v.imgs[0] = {
+            thumbSrc: 'https://via.placeholder.com/300?text=No+Image',
+          };
         }
         delete v.createdAt;
         delete v.deletedAt;
@@ -125,23 +126,27 @@ module.exports = (sequelize, { DataTypes, Op }) => {
     return data;
   };
 
-  Board.getList = async function (id, query, BoardFile, BoardComment) {
-    let { page2 } = query;
-    let listCnt = 10;
-    let pagerCnt = 5;
-    const totalRecord = await BoardComment.count({ where: { board_id: id } });
-    const pager = createPager(page2 || 1, totalRecord, listCnt, pagerCnt);
+  Board.getList = async function (id, query, BoardFile = null, BoardComment = null) {
+    let pager = null;
+    const include = [];
+    if (BoardFile) include.push({ model: BoardFile });
+    if (BoardComment) {
+      let { page2 = 1 } = query;
+      let listCnt = 10;
+      let pagerCnt = 5;
+      let totalRecord = null;
+      totalRecord = await BoardComment.count({ where: { board_id: id } });
+      pager = createPager(page2 || 1, totalRecord, listCnt, pagerCnt);
+      include.push({
+        model: BoardComment,
+        order: [['id', 'desc']],
+        offset: pager.startIdx,
+        limit: listCnt,
+      });
+    }
     const lists = await this.findAll({
       where: { id },
-      include: [
-        { model: BoardFile },
-        {
-          model: BoardComment,
-          order: [['id', 'desc']],
-          offset: pager.startIdx,
-          limit: listCnt,
-        },
-      ],
+      include,
     });
     return { lists, pager };
   };
@@ -158,7 +163,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       offset: pager.startIdx,
       limit: pager.listCnt,
       where: {
-        [Op.and]: [{ ...sequelize.getWhere(query) }, { binit_id: boardId }],
+        [Op.and]: [sequelize.getWhere(query), { binit_id: boardId }],
       },
       include: [{ model: BoardFile, attributes: ['saveName', 'fileType'] }],
     });
