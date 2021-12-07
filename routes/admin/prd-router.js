@@ -13,6 +13,8 @@ const {
   Cate,
   Color,
   Section,
+  ColorProduct,
+  SectionProduct,
 } = require('../../models');
 const uploader = require('../../middlewares/multer-mw');
 const afterUploader = require('../../middlewares/after-multer-mw');
@@ -61,9 +63,23 @@ router.get('/:id', queries(), async (req, res, next) => {
       Section,
     });
     const cate = prd.Cates.map((v) => v.id);
-    const colors = Color.findAll({ order: [['name', 'asc']] });
-    const sections = Section.findAll({ order: [['name', 'asc']] });
-    // res.json({ prd, cate });
+    const color = await Color.findAll({ order: [['name', 'asc']] });
+    const section = await Section.findAll({ order: [['name', 'asc']] });
+    const colors = color
+      .map((v) => v.toJSON())
+      .map((v) => {
+        v.checked = _.find(prd.Colors, ['id', v.id]) ? true : false;
+        v.style = `background-color: ${v.code};`;
+        return v;
+      });
+    const sections = section
+      .map((v) => v.toJSON())
+      .map((v) => {
+        v.checked = _.find(prd.Sections, ['id', v.id]) ? true : false;
+        v.txtColor = convert.hex.hsl(v.color)[2] > 50 ? '#000000' : '#ffffff';
+        v.style = `background-color: ${v.color}; color: ${v.txtColor};`;
+        return v;
+      });
     res.render('admin/prd/prd-update', { prd, cate, _, colors, sections });
   } catch (err) {
     next(createError(err));
@@ -117,6 +133,18 @@ router.post(
           prd_id: product.id,
         }));
         if (req.body.cate !== '') await CateProduct.bulkCreate(catePrd);
+
+        const sectionPrd = req.body.section.map((id) => ({
+          section_id: id,
+          prd_id: product.id,
+        }));
+        if (req.body.section.length) await SectionProduct.bulkCreate(sectionPrd);
+
+        const colorPrd = req.body.color.map((id) => ({
+          color_id: id,
+          prd_id: product.id,
+        }));
+        if (req.body.color.length) await ColorProduct.bulkCreate(colorPrd);
         res.redirect('/admin/prd');
       }
     } catch (err) {
