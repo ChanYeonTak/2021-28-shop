@@ -1,159 +1,25 @@
-const path = require('path');
 const express = require('express');
 const router = express.Router();
-const { escape, unescape } = require('html-escaper');
-const createError = require('http-errors');
-const convert = require('color-convert');
-const { error } = require('../../modules/util');
-const _ = require('lodash');
-const {
-  Product,
-  ProductFile,
-  CateProduct,
-  Cate,
-  Color,
-  Section,
-} = require('../../models');
-const uploader = require('../../middlewares/multer-mw');
-const afterUploader = require('../../middlewares/after-multer-mw');
-const sharpInit = require('../../middlewares/sharp-mw');
-const { moveFile } = require('../../modules/util');
+
 const queries = require('../../middlewares/query-mw');
-const { isAdmin } = require('../../middlewares/auth-mw');
+const { Product, ProductFile, Cate } = require('../../models');
 
-router.get('/', queries(), async (req, res, next) => {
-  if (req.query.type === 'create') {
-    const color = await Color.findAll({ order: [['name', 'asc']] });
-    const colors = color.map((v) => {
-      v.style = `background-color: ${v.code};`;
-      return v;
-    });
-    const section = await Section.findAll({ order: [['name', 'asc']] });
-    const sections = section.map((v) => {
-      v.txtColor = convert.hex.hsl(v.color)[2] > 50 ? '#000000' : '#ffffff';
-      v.style = `background-color: ${v.color}; color: ${v.txtColor};`;
-      return v;
-    });
-    // res.json({ colors, sections });
-    res.render('admin/prd/prd-form', { colors, sections });
-  } else next();
-});
-
+// 리스트
 router.get('/', queries(), async (req, res, next) => {
   try {
-    const { lists, pager, totalRecord } = await Product.getLists(
-      req.query,
-      ProductFile
-    );
-    // res.json({ lists, pager, totalRecord });
-    res.render('admin/prd/prd-list', { lists, pager, totalRecord });
+    const rs = await Product.findProducts(req.query, Cate, ProductFile);
+    res.status(200).json(rs);
   } catch (err) {
-    next(createError(err));
+    res.status(500).json(err);
   }
 });
 
+// 상세페이지
 router.get('/:id', queries(), async (req, res, next) => {
   try {
-    const prd = await Product.findProduct(req.params.id, {
-      Cate,
-      ProductFile,
-      Color,
-      Section,
-    });
+    const prd = await Product.findProduct(req.params.id, Cate, ProductFile);
     const cate = prd.Cates.map((v) => v.id);
-    const colors = Color.findAll({ order: [['name', 'asc']] });
-    const sections = Section.findAll({ order: [['name', 'asc']] });
-    // res.json({ prd, cate });
-    res.render('admin/prd/prd-update', { prd, cate, _, colors, sections });
-  } catch (err) {
-    next(createError(err));
-  }
-});
-
-router.post(
-  '/',
-  uploader.fields([
-    { name: 'img_1' },
-    { name: 'img_2' },
-    { name: 'img_3' },
-    { name: 'img_4' },
-    { name: 'img_5' },
-    { name: 'detail_1' },
-    { name: 'detail_2' },
-  ]),
-  afterUploader([
-    'img_1',
-    'img_2',
-    'img_3',
-    'img_4',
-    'img_5',
-    'detail_1',
-    'detail_2',
-  ]),
-  sharpInit(300),
-  queries('body'),
-  async (req, res, next) => {
-    try {
-      if (req.body.type === 'update') {
-        req.body.content = escape(req.body.content);
-        await Product.update(req.body, { where: { id: req.body.id } });
-        req.files.forEach((file) => (file.prd_id = req.body.id));
-        const files = await ProductFile.bulkCreate(req.files);
-        await CateProduct.destroy({ where: { prd_id: req.body.id } });
-        const catePrd = req.body.cate.split(',').map((cate) => ({
-          cate_id: cate,
-          prd_id: req.body.id,
-        }));
-        if (req.body.cate !== '') await CateProduct.bulkCreate(catePrd);
-        // res.json({ file: req.files, req: req.body, locals: res.locals });
-        res.redirect(res.locals.goList);
-      } else {
-        req.body.content = escape(req.body.content);
-        const product = await Product.create(req.body);
-        req.files.forEach((file) => (file.prd_id = product.id));
-        if (req.files.length) await ProductFile.bulkCreate(req.files);
-        const catePrd = req.body.cate.split(',').map((cate) => ({
-          cate_id: cate,
-          prd_id: product.id,
-        }));
-        if (req.body.cate !== '') await CateProduct.bulkCreate(catePrd);
-        res.redirect('/admin/prd');
-      }
-    } catch (err) {
-      next(createError(err));
-    }
-  }
-);
-
-router.put('/', async (req, res, next) => {
-  try {
-    res.redirect('/admin/prd');
-  } catch (err) {
-    next(createError(err));
-  }
-});
-
-router.put('/status', queries('body'), async (req, res, next) => {
-  try {
-    const { status, id } = req.body;
-    await Product.update({ status }, { where: { id } });
-    res.redirect(res.locals.goList);
-  } catch (err) {
-    next(createError(err));
-  }
-});
-
-router.delete('/', isAdmin(8), queries('body'), async (req, res, next) => {
-  try {
-    const { id } = req.body;
-    await Product.destroy({ where: { id } });
-    const files = await ProductFile.findAll({
-      attributes: ['saveName'],
-      where: { prd_id: id },
-    });
-    for (let { saveName } of files) await moveFile(saveName);
-    await ProductFile.destroy({ where: { prd_id: id } });
-    res.redirect(res.locals.goList);
+    res.render('admin/prd/prd-update', { prd, cate, _ });
   } catch (err) {
     next(createError(err));
   }
