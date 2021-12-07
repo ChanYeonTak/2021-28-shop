@@ -89,7 +89,7 @@ module.exports = (sequelize, { DataTypes, Op }) => {
       through: 'color_product',
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
-    });   
+    });
     Product.belongsToMany(models.Section, {
       foreignKey: {
         name: 'prd_id',
@@ -157,11 +157,16 @@ module.exports = (sequelize, { DataTypes, Op }) => {
     }
   };
 
-  Product.findProduct = async function (id, Cate, ProductFile) {
+  Product.findProduct = async function (id, { Cate, ProductFile, Color, Section }) {
     const rs = await this.findOne({
       where: { id },
       order: [[ProductFile, 'id', 'asc']],
-      include: [{ model: Cate }, { model: ProductFile }],
+      include: [
+        { model: Cate },
+        { model: ProductFile },
+        { model: Color },
+        { model: Section },
+      ],
     });
     const data = rs.toJSON();
     data.updatedAt = dateFormat(data.updatedAt, 'H');
