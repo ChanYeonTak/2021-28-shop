@@ -2,7 +2,6 @@
 .env.production
 #storages 
 storages-remove
-*.css
 .DS_store 
 
 # Logs
