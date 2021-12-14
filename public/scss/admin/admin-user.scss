@@ -34,18 +34,18 @@
   }
   &.update-wrapper {
     td.require::before {
-      display: inline-block; 
-      content: '*'; 
-      color: #f10; 
-      margin-right: .25em; 
+      display: inline-block;
+      content: '*';
+      color: #f10;
+      margin-right: 0.5em;
       font-size: 1.25em;
     }
     .valid {
-      padding-top: .5em; 
+      padding-top: 0.5em;
       color: #00559b;
-    }
-    &.error {
-      color: #a70404;
+      &.error {
+        color: #a70404;
+      }
     }
   }
 }

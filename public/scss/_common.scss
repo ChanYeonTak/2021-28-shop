@@ -83,7 +83,7 @@ a:not(.btn) {
   .header-top {
     background-color: #fafafa;
     border-top: 3px solid #575755;
-    border-bottom: 1px solid $grey-color;
+    border-bottom: 1px solid $secondary-color;
     @include flex($h: space-between, $v: flex-start);
     h1.logo {
       font-size: inherit;
@@ -102,7 +102,7 @@ a:not(.btn) {
   .navi-wrap {
     @include flex($h: center);
     background-color: #f4f4f4;
-    border-bottom: 1px solid $grey-color;
+    border-bottom: 1px solid $secondary-color;
     .navi {
       &:hover {
         opacity: 0.7;
@@ -115,7 +115,7 @@ a:not(.btn) {
 }
 
 section.wrapper {
-  min-height: 60vh;
+  min-height: 70vh;
   padding: 2em 1.5em 1.5em 1.5em;
   border-bottom: 1px solid #dee2e6;
   border-left: 1px solid #dee2e6;
@@ -125,35 +125,37 @@ section.wrapper {
 .nav-tabs {
   .nav-item.show {
     .nav-link {
-      color:$accent-color;
+      color: $primary-color;
       border-color: #dee2e6 #dee2e6 #fff;
     }
   }
   .nav-link {
     color: $secondary-color;
     &.active {
-      color:$primary-color;
+      color: $primary-color;
       border-color: #dee2e6 #dee2e6 #fff;
     }
   }
 }
 
 h2.title {
-  font-size : 1.75em;
+  font-size: 1.75em;
   color: $dark-color;
   small {
     color: $grey-color;
   }
 }
+
 h3.title {
-  font-size : 1.5em;
+  font-size: 1.5em;
   color: $dark-color;
   small {
     color: $grey-color;
   }
 }
+
 h4.title {
-  font-size : 1.25em;
+  font-size: 1.25em;
   color: $dark-color;
   small {
     color: $grey-color;

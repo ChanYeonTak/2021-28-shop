@@ -4,7 +4,7 @@
 .comment-wrapper {
   margin: 1.5em 0;
   padding: 1em 0;
-  border-top: 3px double $success-color;
+  border-top: 4px double $success-color;
   .comment-create {
     @include flex;
     input[name='writer'] {
@@ -12,7 +12,6 @@
       margin-right: 0.5em;
     }
     input[name='comment'] {
-      flex-grow: 1;
       margin-right: 0.5em;
     }
     button {
@@ -20,34 +19,34 @@
     }
   }
   .comment-wrap {
-    margin-top: 1em;;
+    margin-top: 1em;
     border-top: 1px solid #ccc;
     .comment-list {
       @include rel;
-      padding: 0.5em 0;
+      padding: 0.5em;
       border-bottom: 1px solid #ccc;
       @include flex($h: space-between, $v: flex-start);
-        .content {
-          .writer {
-            font-weight: bold;
-            margin-bottom: 0.25em;
-          }
-          .comment {
-            padding-left : 0.5em;
-          }
+      .content {
+        .writer {
+          font-weight: bold;
+          margin-bottom: 0.25em;
         }
-        .date {
-          width: 160px;
-          font-size: 0.875em;
-          color: $grey-color;
-          text-align: right;
+        .comment {
+          padding-left: 0.5em;
         }
-        .bt-delete {
-          @include layer($r:0.25em, $b:0.25em);
-        }
-        form[name='deleteCommentForm'] {
-          @include abs;
-        }
+      }
+      .date {
+        width: 140px;
+        font-size: 0.875em;
+        color: #aaa;
+        text-align: right;
+      }
+      .bt-delete {
+        @include layer($r: 0.25em, $b: 0.25em);
+      }
+      form[name='deleteCommentForm'] {
+        @include abs;
       }
     }
   }
+}

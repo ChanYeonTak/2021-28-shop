@@ -1,5 +1,4 @@
 $('form[name="userForm"]').submit(onSubmitUserForm);
-
 function onSubmitUserForm(e) {
   e.preventDefault();
   var f = this;
