@@ -1,45 +1,45 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
+const { findObj, findChildId } = require('../modules/util');
 
 module.exports = (sequelize, { DataTypes, Op }) => {
-  const Section = sequelize.define(
-    'Section',
+  const Color = sequelize.define(
+    'Color',
     {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
-        primaryKey: true,
         autoIncrement: true,
+        primaryKey: true,
         allowNull: false,
       },
       name: {
         type: DataTypes.STRING(50),
         allowNull: false,
       },
-      color: {
+      code: {
         type: DataTypes.STRING(7),
         allowNull: false,
-        defaultValue: '#000000',
       },
     },
     {
       charset: 'utf8',
       collate: 'utf8_general_ci',
-      tableName: 'section',
+      tableName: 'color',
       paranoid: false,
     }
   );
 
-  Section.associate = (models) => {
-    Section.belongsToMany(models.Product, {
+  Color.associate = (models) => {
+    Color.belongsToMany(models.Product, {
       foreignKey: {
-        name: 'section_id',
+        name: 'color_id',
       },
-      through: 'section_product',
+      through: 'color_product',
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
     });
   };
 
-  return Section;
+  return Color;
 };

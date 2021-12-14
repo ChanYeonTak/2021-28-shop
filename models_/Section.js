@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
+const { findObj, findChildId } = require('../modules/util');
 
 module.exports = (sequelize, { DataTypes, Op }) => {
   const Section = sequelize.define(
@@ -8,8 +9,8 @@ module.exports = (sequelize, { DataTypes, Op }) => {
     {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
-        primaryKey: true,
         autoIncrement: true,
+        primaryKey: true,
         allowNull: false,
       },
       name: {

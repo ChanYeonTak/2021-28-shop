@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const fs = require('fs-extra');
 const path = require('path');
-const { findObj, findChildId } = require('../modules/util');
 
 module.exports = (sequelize, { DataTypes, Op }) => {
   const Color = sequelize.define(
@@ -9,8 +8,8 @@ module.exports = (sequelize, { DataTypes, Op }) => {
     {
       id: {
         type: DataTypes.INTEGER(10).UNSIGNED,
-        autoIncrement: true,
         primaryKey: true,
+        autoIncrement: true,
         allowNull: false,
       },
       name: {
