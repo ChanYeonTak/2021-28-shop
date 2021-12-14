@@ -1,6 +1,6 @@
 .env.development
 .env.production
-storages 
+#storages 
 storages-remove
 *.css
 .DS_store 
